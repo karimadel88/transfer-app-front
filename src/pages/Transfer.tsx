@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   MessageCircle,
   ChevronDown,
+  Gift,
 } from 'lucide-react';
 
 /* ─── StatusBadge ─── */
@@ -295,13 +296,43 @@ function TransferContent() {
                   </div>
                   {quote.available && (
                     <>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">الرسوم</span>
-                        <span className="font-medium text-orange-600">{quote.fee.toLocaleString('ar-EG')} ج.م</span>
-                      </div>
+                      {/* Min / Max transfer amount limits */}
+                      {(quote.minAmount != null || quote.maxAmount != null) && (
+                        <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 text-xs text-blue-700 space-y-1">
+                          {quote.minAmount != null && (
+                            <div className="flex justify-between">
+                              <span>الحد الأدنى للتحويل</span>
+                              <span className="font-medium">{quote.minAmount.toLocaleString('ar-EG')} ج.م</span>
+                            </div>
+                          )}
+                          {quote.maxAmount != null && (
+                            <div className="flex justify-between">
+                              <span>الحد الأقصى للتحويل</span>
+                              <span className="font-medium">{quote.maxAmount.toLocaleString('ar-EG')} ج.م</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {/* Fee or Cashback row */}
+                      {quote.benefitType === 'CASHBACK' ? (
+                        <div className="flex justify-between">
+                          <span className="text-purple-600 flex items-center gap-1">
+                            <Gift className="h-3.5 w-3.5" />
+                            كاش باك
+                          </span>
+                          <span className="font-medium text-purple-600">-{Math.abs(quote.fee).toLocaleString('ar-EG')} ج.م</span>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">الرسوم</span>
+                          <span className="font-medium text-orange-600">+{quote.fee.toLocaleString('ar-EG')} ج.م</span>
+                        </div>
+                      )}
                       <div className="flex justify-between font-bold text-base border-t pt-2">
                         <span>الإجمالي</span>
-                        <span className="text-brand-dark">{quote.total.toLocaleString('ar-EG')} ج.م</span>
+                        <span className={quote.benefitType === 'CASHBACK' ? 'text-purple-700' : 'text-brand-dark'}>
+                          {quote.total.toLocaleString('ar-EG')} ج.م
+                        </span>
                       </div>
                     </>
                   )}

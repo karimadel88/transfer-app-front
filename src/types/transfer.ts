@@ -16,8 +16,15 @@ export interface TransferQuote {
   fromMethod: { id: string; name: string; code: string };
   toMethod: { id: string; name: string; code: string };
   amount: number;
+  /** Fee charged. Negative value means cashback (client receives money back). */
   fee: number;
   total: number;
+  /** FEE = client pays fee; CASHBACK = client receives money back */
+  benefitType: 'FEE' | 'CASHBACK' | null;
+  /** Minimum transfer amount for this route (null = no limit) */
+  minAmount: number | null;
+  /** Maximum transfer amount for this route (null = no limit) */
+  maxAmount: number | null;
   feeRuleId: string | null;
   message?: string;
 }
