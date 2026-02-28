@@ -25,11 +25,12 @@ import { useCustomerAuth } from '@/contexts/CustomerAuthContext';
 /* ─── Header ─── */
 function Header() {
   const { customer, logout } = useCustomerAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-brand-dark/95 backdrop-blur-md border-b border-white/10">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between relative">
+        <Link to="/" className="flex items-center gap-2 relative z-50">
           <div className="w-10 h-10 rounded-full bg-brand-gold/20 border-2 border-brand-gold flex items-center justify-center">
             <span className="text-brand-gold font-bold text-lg">$</span>
           </div>
@@ -38,43 +39,63 @@ function Header() {
             <span className="text-brand-gold text-[10px] leading-tight">لخدمات الدفع الالكتروني</span>
           </div>
         </Link>
-        <nav className="hidden md:flex items-center gap-6">
-          <a href="#services" className="text-white/70 hover:text-brand-gold transition-colors text-sm">خدماتنا</a>
-          <a href="#how-it-works" className="text-white/70 hover:text-brand-gold transition-colors text-sm">كيف يعمل</a>
-          <Link to="/offers" className="text-white/70 hover:text-brand-gold transition-colors text-sm">عروضنا</Link>
-          <a href="#faq" className="text-white/70 hover:text-brand-gold transition-colors text-sm">الأسئلة الشائعة</a>
-          <a href="#contact" className="text-white/70 hover:text-brand-gold transition-colors text-sm">تواصل معنا</a>
-          <Link to="/blogs" className="text-white/70 hover:text-brand-gold transition-colors text-sm">المدونة</Link>
-        </nav>
-        <div className="flex items-center gap-3">
-          {customer ? (
-            <div className="hidden md:flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
-              <span className="text-white/80 text-sm flex items-center gap-1">
-                <User className="w-4 h-4" />
-                {customer.name}
-              </span>
-              <button 
-                onClick={logout}
-                className="text-white/60 hover:text-red-400 transition-colors text-sm font-bold border-r border-white/10 pr-3"
+        
+        {/* Mobile menu button */}
+        <button 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden text-white/80 hover:text-white p-2 relative z-50"
+        >
+          {isMobileMenuOpen ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> 
+          : <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>}
+        </button>
+
+        <div className={`
+          absolute md:static top-16 left-0 right-0 bg-brand-dark md:bg-transparent
+          border-b border-white/10 md:border-none p-4 md:p-0
+          flex flex-col md:flex-row items-center justify-between flex-1 ml-0 md:mr-8 transition-all duration-300
+          ${isMobileMenuOpen ? 'opacity-100 visible h-auto' : 'opacity-0 invisible h-0 overflow-hidden md:h-auto md:opacity-100 md:visible md:overflow-visible'}
+        `}>
+          <nav className="flex flex-col md:flex-row items-center gap-2 md:gap-6 w-full md:w-auto mb-4 md:mb-0">
+            <a href="#services" onClick={() => setIsMobileMenuOpen(false)} className="text-white/70 hover:text-brand-gold transition-colors text-sm py-2 md:py-0 w-full text-center md:w-auto">خدماتنا</a>
+            <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-white/70 hover:text-brand-gold transition-colors text-sm py-2 md:py-0 w-full text-center md:w-auto">كيف يعمل</a>
+            <Link to="/offers" onClick={() => setIsMobileMenuOpen(false)} className="text-white/70 hover:text-brand-gold transition-colors text-sm py-2 md:py-0 w-full text-center md:w-auto">عروضنا</Link>
+            <a href="#faq" onClick={() => setIsMobileMenuOpen(false)} className="text-white/70 hover:text-brand-gold transition-colors text-sm py-2 md:py-0 w-full text-center md:w-auto">الأسئلة الشائعة</a>
+            <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-white/70 hover:text-brand-gold transition-colors text-sm py-2 md:py-0 w-full text-center md:w-auto">تواصل معنا</a>
+            <Link to="/blogs" onClick={() => setIsMobileMenuOpen(false)} className="text-white/70 hover:text-brand-gold transition-colors text-sm py-2 md:py-0 w-full text-center md:w-auto">المدونة</Link>
+          </nav>
+          
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto justify-center">
+            {customer ? (
+              <div className="flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 justify-center w-full sm:w-auto">
+                <span className="text-white/80 text-sm flex items-center gap-1">
+                  <User className="w-4 h-4" />
+                  {customer.name}
+                </span>
+                <button 
+                  onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                  className="text-white/60 hover:text-red-400 transition-colors text-sm font-bold border-r border-white/10 pr-3"
+                >
+                  خروج
+                </button>
+              </div>
+            ) : (
+              <Link 
+                to="/auth/login" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-5 py-2 rounded-lg transition-all text-sm border border-white/20 backdrop-blur-sm w-full sm:w-auto"
               >
-                خروج
-              </button>
-            </div>
-          ) : (
-            <Link 
-              to="/auth/login" 
-              className="hidden md:flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-5 py-2 rounded-lg transition-all text-sm border border-white/20 backdrop-blur-sm"
+                <LogIn className="w-4 h-4" />
+                سجل الدخول
+              </Link>
+            )}
+            <Link
+              to="/transfer"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="bg-brand-gold hover:bg-brand-gold-light text-brand-dark font-bold px-5 py-2 rounded-lg transition-all text-sm shadow-lg shadow-brand-gold/20 hover:shadow-brand-gold/40 flex items-center justify-center w-full sm:w-auto"
             >
-              <LogIn className="w-4 h-4" />
-              سجل الدخول
+              حوّل الآن
             </Link>
-          )}
-          <Link
-            to="/transfer"
-            className="bg-brand-gold hover:bg-brand-gold-light text-brand-dark font-bold px-5 py-2 rounded-lg transition-all text-sm shadow-lg shadow-brand-gold/20 hover:shadow-brand-gold/40"
-          >
-            حوّل الآن
-          </Link>
+          </div>
         </div>
       </div>
     </header>
@@ -129,7 +150,7 @@ function HeroSection() {
 
           {/* Partner brands */}
           <div className="mt-14 animate-fade-in-up-delay-3">
-            <p className="text-white/40 text-sm mb-4">شريك معتمد مع</p>
+            <p className="text-white/40 text-sm mb-4">جميع الخدمات مع</p>
             <div className="flex items-center justify-center gap-6 md:gap-10 flex-wrap">
               {['Vodafone Cash', 'Etisalat Cash', 'Orange Cash', 'InstaPay', 'Fawry'].map((brand) => (
                 <div key={brand} className="glass-card rounded-lg px-4 py-2">
@@ -267,12 +288,6 @@ function HowItWorksSection() {
 }
 
 /* ─── Cashback Section ─── */
-const cashbackTiers = [
-  { range: '٥,٠٠٠ — ٣٠,٠٠٠ ج.م', rate: '٢ ج.م', per: 'لكل ١,٠٠٠ ج.م', color: 'border-emerald-400' },
-  { range: '٣١,٠٠٠ — ٦٥,٠٠٠ ج.م', rate: '٢.٥ ج.م', per: 'لكل ١,٠٠٠ ج.م', color: 'border-brand-gold', featured: true },
-  { range: '٦٥,٠٠٠ ج.م فأكثر', rate: '٣ ج.م', per: 'لكل ١,٠٠٠ ج.م', color: 'border-purple-400' },
-];
-
 function CashbackSection() {
   return (
     <section id="cashback" className="py-20 gradient-hero relative overflow-hidden">
@@ -281,32 +296,19 @@ function CashbackSection() {
         <div className="absolute bottom-10 left-20 w-80 h-80 bg-brand-teal/20 rounded-full blur-3xl" />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-14">
+      <div className="container mx-auto px-4 relative z-10 text-center">
+        <div className="mb-14">
           <span className="text-brand-gold font-bold text-base">عروض مميزة</span>
-          <h2 className="text-4xl md:text-5xl font-black text-white mt-3">كاش باك على كل تحويل!</h2>
-          <p className="text-white/60 mt-3 text-lg">كل ما تحوّل أكتر، كل ما تكسب أكتر</p>
+          <h2 className="text-4xl md:text-5xl font-black text-white mt-3 leading-tight">كاش باك على الايداع وخصومات وعروض كتير</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-          {cashbackTiers.map((tier) => (
-            <div
-              key={tier.range}
-              className={`glass-card rounded-2xl p-6 text-center border-t-4 ${tier.color} ${
-                tier.featured ? 'scale-105 shadow-2xl ring-2 ring-brand-gold/20' : ''
-              } transition-transform hover:scale-105`}
-            >
-              {tier.featured && (
-                <div className="inline-flex items-center gap-1 bg-brand-gold/20 text-brand-gold text-xs font-bold px-3 py-1 rounded-full mb-3">
-                  <Star className="h-3 w-3" /> الأكثر طلباً
-                </div>
-              )}
-              <p className="text-white/60 text-sm mb-2">{tier.range}</p>
-              <p className="text-4xl font-black text-brand-gold mb-1">{tier.rate}</p>
-              <p className="text-white/50 text-xs">{tier.per}</p>
-            </div>
-          ))}
-        </div>
+        <Link
+          to="/offers"
+          className="inline-flex items-center gap-2 bg-brand-gold hover:bg-brand-gold-light text-brand-dark font-bold px-8 py-3 rounded-xl transition-all shadow-lg shadow-brand-gold/20 hover:shadow-brand-gold/40 hover:-translate-y-0.5 text-lg"
+        >
+          <Star className="h-5 w-5" />
+          تصفح العروض
+        </Link>
       </div>
     </section>
   );
