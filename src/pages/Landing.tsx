@@ -452,7 +452,7 @@ function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-white/60 text-sm">
                 <Phone className="h-4 w-4 text-brand-gold shrink-0" />
-                <span dir="ltr">01006409853 — 01009531974</span>
+                <span dir="ltr">01009531974</span>
               </li>
               <li className="flex items-start gap-2 text-white/60 text-sm">
                 <MapPin className="h-4 w-4 text-brand-gold shrink-0 mt-0.5" />
@@ -462,10 +462,18 @@ function Footer() {
                 <MapPin className="h-4 w-4 text-brand-gold shrink-0 mt-0.5" />
                 <span>الرياض — الشارع الرئيسي منزل أ. مصطفى محمد عباس</span>
               </li>
+                            <li className="flex items-start gap-2 text-white/60 text-sm">
+                <MapPin className="h-4 w-4 text-brand-gold shrink-0 mt-0.5" />
+                <span>الكفر — الشارع الرئيسي أمام اكاديميه العباقره التعليميه</span>
+              </li>
+                            <li className="flex items-start gap-2 text-white/60 text-sm">
+                <MapPin className="h-4 w-4 text-brand-gold shrink-0 mt-0.5" />
+                <span>الميمون — شارع الشيخ مبارك، بجوار مسجد الشيخ مبارك</span>
+              </li>
             </ul>
             <div className="mt-4 flex gap-2">
               <a
-                href="https://wa.me/201006409853"
+                href="https://wa.me/2010 09531974"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
@@ -499,7 +507,7 @@ function Footer() {
 function FloatingWhatsApp() {
   return (
     <a
-      href="https://wa.me/201006409853"
+      href="https://wa.me/2010 09531974"
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 left-6 z-50 w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-xl shadow-green-500/30 transition-all hover:scale-110"

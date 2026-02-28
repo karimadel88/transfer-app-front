@@ -80,7 +80,7 @@ function Footer() {
         <p className="text-white/30 text-sm">© {new Date().getFullYear()} الفتح لخدمات الدفع الالكتروني</p>
         <div className="flex items-center gap-3">
           <a
-            href="https://wa.me/201006409853"
+            href="https://wa.me/2010 09531974"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs transition-colors"
@@ -97,7 +97,7 @@ function Footer() {
 function FloatingWhatsApp() {
   return (
     <a
-      href="https://wa.me/201006409853"
+      href="https://wa.me/2010 09531974"
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 left-6 z-50 w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-xl shadow-green-500/30 transition-all hover:scale-110"
