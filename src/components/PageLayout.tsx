@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, LogIn, User } from 'lucide-react';
+import { useCustomerAuth } from '@/contexts/CustomerAuthContext';
 
 function Header() {
+  const { customer, logout } = useCustomerAuth();
+
   return (
     <header className="bg-brand-dark border-b border-white/10">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -15,9 +18,36 @@ function Header() {
           </div>
         </Link>
         <nav className="flex items-center gap-4">
+          <Link to="/offers" className="text-white/60 hover:text-brand-gold transition-colors text-sm">العروض</Link>
+          <Link to="/blogs" className="text-white/60 hover:text-brand-gold transition-colors text-sm">المدونة</Link>
           <Link to="/transfer" className="text-white/60 hover:text-brand-gold transition-colors text-sm">تحويل</Link>
           <Link to="/orders" className="text-white/60 hover:text-brand-gold transition-colors text-sm">طلباتي</Link>
         </nav>
+        
+        <div className="flex items-center gap-3">
+          {customer ? (
+            <div className="flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+              <span className="text-white/80 text-sm flex items-center gap-1">
+                <User className="w-4 h-4" />
+                {customer.name}
+              </span>
+              <button 
+                onClick={logout}
+                className="text-white/60 hover:text-red-400 transition-colors text-sm font-bold border-r border-white/10 pr-3"
+              >
+                خروج
+              </button>
+            </div>
+          ) : (
+            <Link 
+              to="/auth/login" 
+              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-5 py-2 rounded-lg transition-all text-sm border border-white/20 backdrop-blur-sm"
+            >
+              <LogIn className="w-4 h-4" />
+              سجل الدخول
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );

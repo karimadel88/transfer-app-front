@@ -1,13 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { transferApi } from '@/lib/api';
 import { TransferOrder, TransferOrderStatus, PaginatedResponse } from '@/types/transfer';
 import PageLayout from '@/components/PageLayout';
 import { toast } from 'sonner';
+import { CustomerProtectedRoute } from '@/components/CustomerProtectedRoute';
 import {
   ClipboardList,
-  Search,
-  Loader2,
   ArrowLeftRight,
   ChevronLeft,
   ChevronRight,
@@ -46,24 +45,19 @@ function getMethodName(method: any): string {
   return String(method);
 }
 
-export default function Orders() {
-  const [phone, setPhone] = useState('');
-  const [searchedPhone, setSearchedPhone] = useState('');
+function OrdersContent() {
   const [orders, setOrders] = useState<TransferOrder[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [isLoading, setIsLoading] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<TransferOrder | null>(null);
 
-  const fetchOrders = async (phoneNum: string, pageNum: number, status?: string) => {
-    if (!phoneNum) return toast.error('يرجى إدخال رقم الهاتف');
+  const fetchOrders = async (pageNum: number, status?: string) => {
     setIsLoading(true);
-    setHasSearched(true);
     try {
-      const params: any = { phone: phoneNum, page: pageNum, limit: 10 };
+      const params: any = { page: pageNum, limit: 10 };
       if (status && status !== 'ALL') params.status = status;
       const res = await transferApi.getOrders(params);
       const data: PaginatedResponse<TransferOrder> = res.data;
@@ -79,14 +73,13 @@ export default function Orders() {
     }
   };
 
-  const handleSearch = () => {
-    setSearchedPhone(phone);
-    fetchOrders(phone, 1, statusFilter);
-  };
+  useEffect(() => {
+    fetchOrders(1, 'ALL');
+  }, []);
 
   const handleStatusChange = (value: string) => {
     setStatusFilter(value);
-    if (searchedPhone) fetchOrders(searchedPhone, 1, value);
+    fetchOrders(1, value);
   };
 
   return (
@@ -110,107 +103,81 @@ export default function Orders() {
           </Link>
         </div>
 
-        {/* Search */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-5 mb-6">
-          <div className="flex gap-3 items-end">
-            <div className="flex-1 space-y-2">
-              <label className="text-sm font-bold text-brand-dark">رقم الهاتف</label>
-              <input
-                placeholder="01012345678"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-gold/30 focus:border-brand-gold outline-none transition-all"
-              />
-            </div>
-            <button
-              onClick={handleSearch}
-              disabled={isLoading || !phone}
-              className="bg-brand-dark hover:bg-brand-teal disabled:opacity-50 text-white font-bold px-6 py-3 rounded-xl transition-all flex items-center gap-2"
-            >
-              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-              بحث
-            </button>
-          </div>
-        </div>
-
         {/* Results */}
-        {hasSearched && (
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h3 className="font-bold text-brand-dark text-sm">الطلبات ({total})</h3>
-              <div className="relative">
-                <select
-                  value={statusFilter}
-                  onChange={(e) => handleStatusChange(e.target.value)}
-                  className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs appearance-none pr-8 focus:ring-2 focus:ring-brand-gold/30 outline-none"
-                >
-                  {statusOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
-                <ChevronDown className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-              </div>
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div className="flex items-center justify-between p-5 border-b border-gray-100">
+            <h3 className="font-bold text-brand-dark text-sm">الطلبات ({total})</h3>
+            <div className="relative">
+              <select
+                value={statusFilter}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs appearance-none pr-8 focus:ring-2 focus:ring-brand-gold/30 outline-none"
+              >
+                {statusOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+              </select>
+              <ChevronDown className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
             </div>
-
-            {isLoading ? (
-              <div className="p-8 space-y-3">
-                {[1, 2, 3].map((i) => <div key={i} className="h-14 bg-gray-100 rounded-xl animate-pulse" />)}
-              </div>
-            ) : orders.length === 0 ? (
-              <div className="text-center py-16 text-gray-400">
-                <ClipboardList className="h-12 w-12 mx-auto mb-3 opacity-40" />
-                <p className="text-sm">لا توجد طلبات</p>
-              </div>
-            ) : (
-              <>
-                <div className="divide-y divide-gray-50">
-                  {orders.map((order) => (
-                    <div
-                      key={order._id}
-                      className="p-4 hover:bg-gray-50/50 cursor-pointer transition-colors flex items-center gap-4"
-                      onClick={() => setSelectedOrder(order)}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs text-gray-400">
-                            {format(new Date(order.createdAt), 'dd/MM/yyyy', { locale: ar })}
-                          </span>
-                          <StatusBadge status={order.status} />
-                        </div>
-                        <p className="text-sm font-bold text-brand-dark truncate">
-                          {getMethodName(order.fromMethodId)} → {getMethodName(order.toMethodId)}
-                        </p>
-                      </div>
-                      <div className="text-left shrink-0">
-                        <p className="text-sm font-black text-brand-dark">{order.total.toLocaleString('ar-EG')} ج.م</p>
-                        <p className="text-[10px] text-gray-400">رسوم: {order.fee.toLocaleString('ar-EG')}</p>
-                      </div>
-                      <Eye className="h-4 w-4 text-gray-300 shrink-0" />
-                    </div>
-                  ))}
-                </div>
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-3 p-4 border-t border-gray-100">
-                    <button
-                      disabled={page <= 1}
-                      onClick={() => fetchOrders(searchedPhone, page - 1, statusFilter)}
-                      className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition-colors"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                    <span className="text-xs text-gray-400">صفحة {page} من {totalPages}</span>
-                    <button
-                      disabled={page >= totalPages}
-                      onClick={() => fetchOrders(searchedPhone, page + 1, statusFilter)}
-                      className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition-colors"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
           </div>
-        )}
+
+          {isLoading ? (
+            <div className="p-8 space-y-3">
+              {[1, 2, 3].map((i) => <div key={i} className="h-14 bg-gray-100 rounded-xl animate-pulse" />)}
+            </div>
+          ) : orders.length === 0 ? (
+            <div className="text-center py-16 text-gray-400">
+              <ClipboardList className="h-12 w-12 mx-auto mb-3 opacity-40" />
+              <p className="text-sm">لا توجد طلبات</p>
+            </div>
+          ) : (
+            <>
+              <div className="divide-y divide-gray-50">
+                {orders.map((order) => (
+                  <div
+                    key={order._id}
+                    className="p-4 hover:bg-gray-50/50 cursor-pointer transition-colors flex items-center gap-4"
+                    onClick={() => setSelectedOrder(order)}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs text-gray-400">
+                          {format(new Date(order.createdAt), 'dd/MM/yyyy', { locale: ar })}
+                        </span>
+                        <StatusBadge status={order.status} />
+                      </div>
+                      <p className="text-sm font-bold text-brand-dark truncate">
+                        {getMethodName(order.fromMethodId)} → {getMethodName(order.toMethodId)}
+                      </p>
+                    </div>
+                    <div className="text-left shrink-0">
+                      <p className="text-sm font-black text-brand-dark">{order.total.toLocaleString('ar-EG')} ج.م</p>
+                      <p className="text-[10px] text-gray-400">رسوم: {order.fee.toLocaleString('ar-EG')}</p>
+                    </div>
+                    <Eye className="h-4 w-4 text-gray-300 shrink-0" />
+                  </div>
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-3 p-4 border-t border-gray-100">
+                  <button
+                    disabled={page <= 1}
+                    onClick={() => fetchOrders(page - 1, statusFilter)}
+                    className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                  <span className="text-xs text-gray-400">صفحة {page} من {totalPages}</span>
+                  <button
+                    disabled={page >= totalPages}
+                    onClick={() => fetchOrders(page + 1, statusFilter)}
+                    className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
         {/* Order detail modal */}
         {selectedOrder && (
@@ -261,5 +228,13 @@ export default function Orders() {
         )}
       </div>
     </PageLayout>
+  );
+}
+
+export default function Orders() {
+  return (
+    <CustomerProtectedRoute>
+      <OrdersContent />
+    </CustomerProtectedRoute>
   );
 }

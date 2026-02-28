@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { transferApi } from '@/lib/api';
 import { TransferMethod, TransferQuote, TransferConfirmResult, TransferOrderStatus } from '@/types/transfer';
 import PageLayout from '@/components/PageLayout';
 import { toast } from 'sonner';
+import { useCustomerAuth } from '@/contexts/CustomerAuthContext';
+import { CustomerProtectedRoute } from '@/components/CustomerProtectedRoute';
 import {
   ArrowLeftRight,
   Loader2,
@@ -31,7 +33,7 @@ function StatusBadge({ status }: { status: TransferOrderStatus }) {
 
 type Step = 'form' | 'quote' | 'result';
 
-export default function Transfer() {
+function TransferContent() {
   const [methods, setMethods] = useState<TransferMethod[]>([]);
   const [isLoadingMethods, setIsLoadingMethods] = useState(true);
   const [fromMethodId, setFromMethodId] = useState('');
@@ -45,6 +47,10 @@ export default function Transfer() {
   const [isQuoting, setIsQuoting] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
 
+  const { customer } = useCustomerAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
     transferApi.getMethods()
       .then((res) => setMethods(res.data || []))
@@ -52,7 +58,19 @@ export default function Transfer() {
       .finally(() => setIsLoadingMethods(false));
   }, []);
 
+  useEffect(() => {
+    if (customer) {
+      if (!customerName) setCustomerName(customer.name);
+      if (!customerPhone) setCustomerPhone(customer.phone);
+    }
+  }, [customer]);
+
   const handleGetQuote = async () => {
+    if (!customer) {
+      toast.error('يرجى تسجيل الدخول أولاً لإجراء التحويل');
+      return navigate('/auth/login', { state: { from: location } });
+    }
+
     if (!fromMethodId || !toMethodId) return toast.error('يرجى اختيار طريقة التحويل');
     if (fromMethodId === toMethodId) return toast.error('يجب أن تختلف طريقة الإرسال عن الاستلام');
     const parsed = parseFloat(amount);
@@ -77,9 +95,9 @@ export default function Transfer() {
       const res = await transferApi.confirm({
         fromMethodId, toMethodId,
         amount: parseFloat(amount),
-        customerName: customerName || undefined,
-        customerPhone: customerPhone || undefined,
-        customerWhatsapp: customerPhone || undefined,
+        customerName: customerName || (customer?.name || ''),
+        customerPhone: customerPhone || (customer?.phone || ''),
+        customerWhatsapp: customerPhone || (customer?.phone || ''),
       });
       setResult(res.data);
       setStep('result');
@@ -230,7 +248,7 @@ export default function Transfer() {
 
           {/* Optional fields */}
           <div className="space-y-2">
-            <label className="text-sm font-bold text-brand-dark">الاسم <span className="text-gray-400 font-normal">(اختياري)</span></label>
+            <label className="text-sm font-bold text-brand-dark">الاسم </label>
             <input
               placeholder="اسمك"
               value={customerName}
@@ -240,7 +258,7 @@ export default function Transfer() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-bold text-brand-dark">رقم الهاتف / واتساب <span className="text-gray-400 font-normal">(اختياري)</span></label>
+            <label className="text-sm font-bold text-brand-dark">رقم الهاتف / واتساب </label>
             <input
               placeholder="01012345678"
               value={customerPhone}
@@ -321,5 +339,13 @@ export default function Transfer() {
         </div>
       </div>
     </PageLayout>
+  );
+}
+
+export default function Transfer() {
+  return (
+    <CustomerProtectedRoute>
+      <TransferContent />
+    </CustomerProtectedRoute>
   );
 }

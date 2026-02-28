@@ -16,11 +16,16 @@ import {
   Star,
   CheckCircle,
   ArrowLeft,
+  User,
+  LogIn
 } from 'lucide-react';
 import { useState } from 'react';
+import { useCustomerAuth } from '@/contexts/CustomerAuthContext';
 
 /* ─── Header ─── */
 function Header() {
+  const { customer, logout } = useCustomerAuth();
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-brand-dark/95 backdrop-blur-md border-b border-white/10">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -36,11 +41,34 @@ function Header() {
         <nav className="hidden md:flex items-center gap-6">
           <a href="#services" className="text-white/70 hover:text-brand-gold transition-colors text-sm">خدماتنا</a>
           <a href="#how-it-works" className="text-white/70 hover:text-brand-gold transition-colors text-sm">كيف يعمل</a>
-          <a href="#cashback" className="text-white/70 hover:text-brand-gold transition-colors text-sm">عروضنا</a>
+          <Link to="/offers" className="text-white/70 hover:text-brand-gold transition-colors text-sm">عروضنا</Link>
           <a href="#faq" className="text-white/70 hover:text-brand-gold transition-colors text-sm">الأسئلة الشائعة</a>
           <a href="#contact" className="text-white/70 hover:text-brand-gold transition-colors text-sm">تواصل معنا</a>
+          <Link to="/blogs" className="text-white/70 hover:text-brand-gold transition-colors text-sm">المدونة</Link>
         </nav>
         <div className="flex items-center gap-3">
+          {customer ? (
+            <div className="hidden md:flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+              <span className="text-white/80 text-sm flex items-center gap-1">
+                <User className="w-4 h-4" />
+                {customer.name}
+              </span>
+              <button 
+                onClick={logout}
+                className="text-white/60 hover:text-red-400 transition-colors text-sm font-bold border-r border-white/10 pr-3"
+              >
+                خروج
+              </button>
+            </div>
+          ) : (
+            <Link 
+              to="/auth/login" 
+              className="hidden md:flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-5 py-2 rounded-lg transition-all text-sm border border-white/20 backdrop-blur-sm"
+            >
+              <LogIn className="w-4 h-4" />
+              سجل الدخول
+            </Link>
+          )}
           <Link
             to="/transfer"
             className="bg-brand-gold hover:bg-brand-gold-light text-brand-dark font-bold px-5 py-2 rounded-lg transition-all text-sm shadow-lg shadow-brand-gold/20 hover:shadow-brand-gold/40"
