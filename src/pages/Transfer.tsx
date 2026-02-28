@@ -160,16 +160,16 @@ function TransferContent() {
               </div>
 
               <button
-                onClick={() => window.open(result.whatsapp.whatsappUrl, '_blank')}
+                onClick={() => window.open(`https://wa.me/201009531974?text=${encodeURIComponent('مرحباً، أريد متابعة التحويل رقم: ' + result.order.orderNumber)}`, '_blank')}
                 className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-colors"
               >
                 <MessageCircle className="h-5 w-5" />
-                تواصل مع الوسيط عبر واتساب
+                تواصل معنا عبر الواتس لمتابعة التحويل
               </button>
 
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2">
                 <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-                <p className="text-sm text-amber-700">يتم إتمام التحويلات يدوياً عبر محادثة الوسيط على واتساب.</p>
+                <p className="text-sm text-amber-700">يتم إتمام التحويلات يدوياً عبر محادثتنا على واتساب.</p>
               </div>
 
               <div className="flex gap-2">
