@@ -91,6 +91,23 @@ export default function OfferDetails() {
               {offer.offer}
             </div>
             
+            <div className="mt-12 bg-green-50 border border-green-100 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h3 className="font-bold text-green-800 text-lg mb-1">هل لديك استفسار حول هذا العرض؟</h3>
+                <p className="text-green-600 text-sm">تواصل معنا مباشرة عبر الواتساب للاستفادة من العرض أو لمعرفة المزيد من التفاصيل.</p>
+              </div>
+              <a
+                href={`https://wa.me/201009531974?text=${encodeURIComponent('مرحباً، لدي استفسار بخصوص عرض: ' + offer.title + '\n\nرابط العرض:\n' + window.location.href + '\n\n(تم التواصل من خلال موقع الفتح https://elfat7.cloud/)')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded-xl transition-colors"
+                title="استفسر عبر واتساب"
+              >
+                <MessageCircle className="h-5 w-5" />
+                استفسر عن العرض
+              </a>
+            </div>
+
             <div className="mt-12 pt-8 border-t border-gray-100">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2 text-brand-dark font-bold">

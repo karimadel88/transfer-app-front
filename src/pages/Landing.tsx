@@ -473,7 +473,7 @@ function Footer() {
             </ul>
             <div className="mt-4 flex gap-2">
               <a
-                href="https://wa.me/2010 09531974"
+                href={`https://wa.me/201009531974?text=${encodeURIComponent('مرحباً، تم التواصل من خلال موقع الفتح للدفع الإلكتروني https://elfat7.cloud/')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
@@ -507,7 +507,7 @@ function Footer() {
 function FloatingWhatsApp() {
   return (
     <a
-      href="https://wa.me/2010 09531974"
+      href={`https://wa.me/201009531974?text=${encodeURIComponent('مرحباً، تم التواصل من خلال موقع الفتح للدفع الإلكتروني https://elfat7.cloud/')}`}
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 left-6 z-50 w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-xl shadow-green-500/30 transition-all hover:scale-110"

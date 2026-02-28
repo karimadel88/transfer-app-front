@@ -160,7 +160,7 @@ function TransferContent() {
               </div>
 
               <button
-                onClick={() => window.open(`https://wa.me/201009531974?text=${encodeURIComponent('مرحباً، أريد متابعة التحويل رقم: ' + result.order.orderNumber)}`, '_blank')}
+                onClick={() => window.open(`https://wa.me/201009531974?text=${encodeURIComponent('مرحباً، أريد متابعة التحويل رقم: ' + result.order.orderNumber + '\n\n(تم التواصل من خلال موقع الفتح https://elfat7.cloud/)')}`, '_blank')}
                 className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-colors"
               >
                 <MessageCircle className="h-5 w-5" />
