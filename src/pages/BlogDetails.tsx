@@ -7,6 +7,7 @@ import { Loader2, ArrowRight, Share2, Facebook, MessageCircle, Link as LinkIcon 
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import { Helmet } from 'react-helmet-async';
 
 export default function BlogDetails() {
   const { id } = useParams<{ id: string }>();
@@ -45,8 +46,20 @@ export default function BlogDetails() {
     );
   }
 
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+
   return (
     <PageLayout>
+      <Helmet>
+        <title>{blog.title} | الفتح للدفع الالكتروني</title>
+        <meta property="og:title" content={blog.title} />
+        <meta property="og:description" content={blog.description.substring(0, 160)} />
+        {blog.imageId?.url && <meta property="og:image" content={blog.imageId.url} />}
+        <meta property="og:url" content={shareUrl} />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+      
       <div className="container mx-auto px-4 py-12 max-w-4xl" dir="rtl">
         <Link to="/blogs" className="inline-flex items-center gap-2 text-gray-500 hover:text-brand-dark transition-colors mb-8 font-medium">
           <ArrowRight className="h-4 w-4" />
